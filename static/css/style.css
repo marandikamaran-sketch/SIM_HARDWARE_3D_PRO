@@ -41,6 +41,9 @@ body {
     height: 100%;
     display: block;
     cursor: grab;
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 #three-canvas:active {
@@ -119,3 +122,95 @@ body {
     }
 }
 
+
+
+/* ================================================================
+   RESPONSIVE FULLSCREEN, LIGHT/DARK WEB THEME, & TOUCH SUPPORT
+   ================================================================ */
+#viewport-wrapper:fullscreen,
+#viewport-wrapper.sim-fallback-fullscreen {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 99999 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    max-width: none !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    border: 0 !important;
+}
+#viewport-wrapper:fullscreen #three-canvas,
+#viewport-wrapper.sim-fallback-fullscreen #three-canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+#viewport-wrapper:fullscreen .absolute,
+#viewport-wrapper.sim-fallback-fullscreen .absolute {
+    z-index: 2;
+}
+#three-canvas, #gallery-canvas, .part-card, button {
+    -webkit-tap-highlight-color: transparent;
+}
+button { touch-action: manipulation; }
+#three-canvas { touch-action: none; }
+
+body.theme-light {
+    --bg-main: #f1f5f9;
+    --bg-panel: rgba(255,255,255,.96);
+    --border-subtle: #cbd5e1;
+    background: #f1f5f9 !important;
+    color: #0f172a !important;
+}
+body.theme-light header,
+body.theme-light [class*="bg-slate-950"],
+body.theme-light [class*="bg-slate-900"],
+body.theme-light [class*="bg-slate-800"] {
+    background-color: #ffffff !important;
+}
+body.theme-light [class*="border-slate-800"],
+body.theme-light [class*="border-slate-700"] {
+    border-color: #cbd5e1 !important;
+}
+body.theme-light [class*="text-white"],
+body.theme-light [class*="text-slate-100"],
+body.theme-light [class*="text-slate-200"],
+body.theme-light [class*="text-slate-300"] {
+    color: #172033 !important;
+}
+body.theme-light [class*="text-slate-400"],
+body.theme-light [class*="text-slate-500"],
+body.theme-light [class*="text-slate-600"] {
+    color: #526176 !important;
+}
+body.theme-light input { color: #172033 !important; }
+body.theme-light .tab-btn:not(.active) { color: #334155 !important; }
+body.theme-light .part-card { background: #ffffff !important; border-color: #cbd5e1 !important; }
+body.theme-light .part-card.selected { background: #e0f2fe !important; border-color: #0284c7 !important; }
+body.theme-light .part-card.installed { background: #ecfdf5 !important; }
+body.theme-light .gal-selector-btn { background: #ffffff !important; color: #172033 !important; }
+body.theme-light .gal-selector-btn.border-sky-400 { background: #e0f2fe !important; }
+body.theme-light #viewport-wrapper,
+body.theme-light #gallery-viewport { background: radial-gradient(circle at 50% 30%, #dbeafe 0%, #cbd5e1 100%) !important; }
+body.theme-light .power-ready { color: #ffffff !important; }
+
+@media (max-width: 720px) {
+    #viewport-wrapper { height: min(68vh, 560px); min-height: 400px; }
+    #viewport-wrapper .absolute.top-3 { align-items: flex-start; }
+    #viewport-wrapper .absolute.top-3 > span { max-width: 100%; line-height: 1.45; }
+    #viewport-wrapper .absolute.top-3 .pointer-events-auto { justify-content: flex-start; }
+    #viewport-wrapper .absolute.bottom-4 { bottom: 8px; left: 8px; right: 8px; }
+    #viewport-wrapper .absolute.bottom-4 > div { max-width: 100%; flex-wrap: wrap; }
+}
+
+
+/* Input identitas siswa dan kartu komponen ramah sentuh */
+.student-entry { min-width: 0; user-select: text; -webkit-user-select: text; border-bottom: 1px dashed rgba(148,163,184,.55); }
+.student-entry::placeholder { color: #94a3b8; opacity: .9; font-weight: 500; }
+.student-entry:focus { border-bottom-color: #38bdf8; }
+.part-card { touch-action: none; -webkit-user-select: none; user-select: none; }
+.part-card.locked { opacity: .58; filter: saturate(.72); cursor: not-allowed; }
+@media (max-width: 640px) {
+  #parts-list { display: grid; grid-template-columns: repeat(1,minmax(0,1fr)); gap: .55rem; }
+  .student-entry { font-size: 14px; min-height: 30px; }
+}

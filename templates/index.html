@@ -3,14 +3,17 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="SIM-HARDWARE 3D PRO — Media Pembelajaran Interaktif Perakitan Perangkat Keras Komputer 3D Realistis Kelas VII SMP/MTs." />
-    <meta property="og:title" content="SIM-HARDWARE 3D PRO | Simulator Rakit PC Realistis" />
+    <meta name="description" content="SIMulator HARDWARE 3D V 1.O — Media Pembelajaran Interaktif Perakitan Perangkat Keras Komputer 3D Realistis Kelas VII SMP/MTs." />
+    <meta property="og:title" content="SIMulator HARDWARE 3D V 1.OO | Simulator Rakit PC Realistis" />
     <meta property="og:description" content="Belajar merakit komponen komputer asli dalam tampilan 3D interaktif lengkap dengan kuis evaluasi & sertifikat praktikum." />
-    <title>SIM-HARDWARE 3D PRO | Media Pembelajaran Rakit PC Realistis</title>
+    <title>SIMULATOR HARDWARE 3D V 1.O | Misi Rakit Komputer 3D</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
-    <link rel="stylesheet" href="/static/css/style.css" />
+    <script>
+        window.__STATIC_PREFIX__ = (window.location.protocol === 'file:') ? './static' : './static';
+        document.write('<link rel="stylesheet" href="' + window.__STATIC_PREFIX__ + '/css/style.css" />');
+    </script>
 </head>
 <body class="min-h-screen flex flex-col">
 
@@ -23,40 +26,47 @@
                 </div>
                 <div>
                     <div class="flex items-center gap-2">
-                        <h1 class="font-extrabold text-base sm:text-lg text-white tracking-tight">SIM-HARDWARE 3D PRO</h1>
+                        <h1 class="font-extrabold text-base sm:text-lg text-white tracking-tight">SIMULATOR HARDWARE 3D V 1.O</h1>
                         <span class="px-2 py-0.5 text-[10px] font-bold uppercase rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
                             Cloud & Web Ready
                         </span>
                     </div>
-                    <p class="text-xs text-slate-400">Media Pembelajaran Interaktif TIK Kelas VII • SMPIT Sahabat Alam</p>
+                    <p class="text-xs text-slate-400">Misi Laboratorium Komputer • Media Belajar SMP/MTs</p>
                 </div>
             </div>
 
             <!-- 4 MODUL UTAMA -->
             <nav class="flex flex-wrap items-center gap-1.5 bg-slate-900/90 p-1 rounded-2xl border border-slate-800">
                 <button onclick="switchTab('assembly')" data-tab="assembly" class="tab-btn active px-3.5 py-1.5 rounded-xl text-xs font-bold border border-transparent text-slate-300">
-                    🛠️ 1. Rakit PC 3D Realistis
+                    1. Rakit PC 3D Realistis
                 </button>
                 <button onclick="switchTab('gallery')" data-tab="gallery" class="tab-btn px-3.5 py-1.5 rounded-xl text-xs font-bold border border-transparent text-slate-300">
-                    🔍 2. Kenali Komponen Asli 360°
+                    2. Kenali Komponen Asli 360°
                 </button>
                 <button onclick="switchTab('quiz')" data-tab="quiz" class="tab-btn px-3.5 py-1.5 rounded-xl text-xs font-bold border border-transparent text-slate-300">
-                    📝 3. Kuis Evaluasi
+                    3. Kuis Evaluasi
                 </button>
                 <button onclick="switchTab('teacher')" data-tab="teacher" class="tab-btn px-3.5 py-1.5 rounded-xl text-xs font-bold border border-transparent text-slate-300">
-                    📊 4. Rekap Nilai Guru
+                   4. Rekap Nilai Guru
                 </button>
             </nav>
 
             <!-- IDENTITAS SISWA -->
-            <div class="flex items-center gap-2 bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5">
-                <input id="student-name-input" type="text" value="Ahmad Fauzan"
-                       class="bg-transparent text-xs font-bold text-sky-300 focus:outline-none w-28 sm:w-32"
-                       title="Nama Siswa" />
-                <span class="text-slate-600">|</span>
-                <input id="student-class-input" type="text" value="Kelas VII-A"
-                       class="bg-transparent text-xs font-semibold text-emerald-300 focus:outline-none w-20"
-                       title="Kelas" />
+            <div class="flex flex-wrap items-center gap-2 bg-slate-900 border border-slate-800 rounded-xl px-3 py-2" aria-label="Identitas peserta didik">
+                <label class="text-[10px] font-bold text-slate-400" for="student-name-input">Nama</label>
+                <input id="student-name-input" type="text" value="" placeholder="Isi nama siswa"
+                       autocomplete="name" maxlength="60"
+                       class="student-entry bg-transparent text-xs font-bold text-sky-300 placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-sky-400 rounded px-1 w-36 sm:w-40"
+                       title="Ketik nama siswa" aria-label="Isi nama siswa" />
+                <span class="text-slate-600 hidden sm:inline">|</span>
+                <label class="text-[10px] font-bold text-slate-400" for="student-class-input">Kelas</label>
+                <input id="student-class-input" type="text" value="" placeholder="Isi kelas"
+                       maxlength="30"
+                       class="student-entry bg-transparent text-xs font-semibold text-emerald-300 placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-emerald-400 rounded px-1 w-24 sm:w-28"
+                       title="Ketik kelas siswa" aria-label="Isi kelas siswa" />
+            </div>
+            <div class="flex items-center gap-2">
+                <button id="btn-web-theme" onclick="toggleWebTheme()" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-bold text-slate-100" aria-label="Ubah tema tampilan">☀ Mode Terang</button>
             </div>
         </div>
     </header>
@@ -70,14 +80,15 @@
         <aside class="lg:col-span-3 flex flex-col gap-3">
             <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4">
                 <div class="flex items-center justify-between mb-1.5">
-                    <h2 class="text-sm font-bold text-white">Komponen Perangkat Keras</h2>
+                    <h2 class="text-sm font-bold text-white">🧩 Misi Perakit Komputer</h2>
                     <button onclick="resetSimulation()" class="text-[11px] px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700">
                         ↺ Reset
                     </button>
                 </div>
-                <p class="text-[11px] text-slate-400 leading-relaxed mb-3">
-                    Seret (<strong class="text-sky-300">Drag & Drop</strong>) komponen 3D ke slot Motherboard / ruang PSU yang sesuai.
-                </p>
+                <div class="rounded-xl border border-sky-500/25 bg-sky-500/10 p-3 mb-3">
+                    <p class="text-xs font-bold text-sky-300 mb-1">🎯 Tantangan Praktikum</p>
+                    <p class="text-[11px] text-slate-300 leading-relaxed">Seret komponen satu per satu ke tempat yang cocok. Urutannya: Processor → kipas pendingin → RAM A2 → RAM B2 → SSD → VGA → PSU → kabel daya. Perhatikan petunjuk saat memasang!</p>
+                </div>
                 <div id="parts-list" class="space-y-2"></div>
             </div>
 
@@ -89,7 +100,7 @@
                         🔎 Zoom 3D
                     </button>
                 </div>
-                <h3 id="insp-title" class="text-sm font-extrabold text-white">Motherboard ATX Z790-PRO</h3>
+                <h3 id="insp-title" class="text-sm font-extrabold text-white">Motherboard ATX Z790-PRO DDR4</h3>
                 <p id="insp-category" class="text-[11px] text-emerald-400 font-semibold">Papan Sirkuit Utama (Mainboard)</p>
 
                 <div class="bg-slate-950/90 border border-slate-800 rounded-xl p-2.5">
@@ -125,15 +136,15 @@
                         ℹ
                     </div>
                     <div>
-                        <h3 id="status-title" class="text-sm font-bold text-white">Siap Merakit PC 3D Realistis!</h3>
+                        <h3 id="status-title" class="text-sm font-bold text-white">Siap memulai misi perakitan komputer!</h3>
                         <p id="status-message" class="text-xs text-slate-300">
-                            Pasang <strong>CPU</strong>, <strong>RAM</strong>, <strong>SSD</strong>, dan <strong>VGA</strong> pada slot motherboard, letakkan <strong>PSU</strong> di luar motherboard, lalu colokkan <strong>Kabel Power 24-Pin</strong>.
+                            Mulai dengan memasang <strong>Processor</strong>, lalu pendingin CPU, dua keping <strong>RAM</strong> satu per satu, <strong>SSD</strong>, <strong>VGA</strong>, <strong>PSU</strong>, dan kabel daya.
                         </p>
                     </div>
                 </div>
 
                 <div class="flex items-center gap-3 bg-slate-950/90 border border-slate-800 rounded-xl px-3 py-1.5 text-xs">
-                    <div>Terpasang: <span id="hud-installed" class="font-bold text-emerald-400 mono">0/6</span></div>
+                    <div>Terpasang: <span id="hud-installed" class="font-bold text-emerald-400 mono">0/8</span></div>
                     <div class="h-3.5 w-px bg-slate-800"></div>
                     <div>Skor: <span id="hud-score" class="font-bold text-sky-400 mono">100</span></div>
                     <div class="h-3.5 w-px bg-slate-800"></div>
@@ -148,7 +159,7 @@
                 <!-- CAMERA CONTROLS -->
                 <div class="absolute top-3 left-3 right-3 flex flex-wrap items-center justify-between gap-2 pointer-events-none">
                     <span class="px-2.5 py-1 rounded-lg bg-slate-950/80 backdrop-blur border border-slate-800 text-[11px] text-slate-300">
-                        🖱️ <strong>Putar 360°:</strong> Klik Kiri + Geser • <strong>Zoom:</strong> Scroll • <strong>Pasang:</strong> Drag Komponen ke Slot
+                        🖱️ <strong>Putar 360°:</strong> geser area 3D • <strong>Zoom:</strong> scroll/cubit • <strong>Pasang:</strong> seret kartu komponen dengan mouse atau jari ke slot
                     </span>
                     <div class="pointer-events-auto flex items-center gap-1.5">
                         <button onclick="setCameraPreset('overview')" class="px-2.5 py-1 rounded-lg bg-slate-950/85 hover:bg-slate-800 text-[11px] font-semibold text-slate-200 border border-slate-700">
@@ -159,6 +170,9 @@
                         </button>
                         <button onclick="setCameraPreset('monitor')" class="px-2.5 py-1 rounded-lg bg-slate-950/85 hover:bg-slate-800 text-[11px] font-semibold text-slate-200 border border-slate-700">
                             🖥️ Zoom Monitor
+                        </button>
+                        <button id="btn-viewport-fullscreen" onclick="toggleViewportFullscreen()" class="px-2.5 py-1 rounded-lg bg-sky-700 hover:bg-sky-600 text-[11px] font-bold text-white border border-sky-500" aria-label="Tampilkan area simulasi layar penuh">
+                            ⛶ Fullscreen
                         </button>
                     </div>
                 </div>
@@ -188,7 +202,7 @@
             </div>
 
             <!-- CHECKLIST STATUS -->
-            <div id="checklist-bar" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2"></div>
+            <div id="checklist-bar" class="grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-8 gap-2"></div>
         </section>
     </main>
 
@@ -202,25 +216,28 @@
                 <p class="text-xs text-slate-400 mb-3">Pilih komponen untuk memutar dan mengamati bentuk fisik, warna pin, dan port aslinya.</p>
 
                 <button onclick="loadGalleryItem('motherboard')" data-item="motherboard" class="gal-selector-btn w-full text-left p-3 rounded-xl border border-slate-800 bg-slate-950 hover:border-sky-500 text-xs font-bold text-white">
-                    🟩 Motherboard ATX Z790
+                    🟩 Motherboard ATX Z790 DDR4
                 </button>
                 <button onclick="loadGalleryItem('cpu')" data-item="cpu" class="gal-selector-btn w-full text-left p-3 rounded-xl border border-slate-800 bg-slate-950 hover:border-sky-500 text-xs font-bold text-white">
-                    🔲 Processor (CPU) LGA1700
+                     Processor (CPU) LGA1700
                 </button>
-                <button onclick="loadGalleryItem('ram')" data-item="ram" class="gal-selector-btn w-full text-left p-3 rounded-xl border border-slate-800 bg-slate-950 hover:border-sky-500 text-xs font-bold text-white">
-                    📏 Memory RAM DDR4 16GB
+                <button onclick="loadGalleryItem('ram1')" data-item="ram1" class="gal-selector-btn w-full text-left p-3 rounded-xl border border-slate-800 bg-slate-950 hover:border-sky-500 text-xs font-bold text-white">
+                    Memory RAM DDR4 Green PCB
+                </button>
+                <button onclick="loadGalleryItem('cpuCooler')" data-item="cpuCooler" class="gal-selector-btn w-full text-left p-3 rounded-xl border border-slate-800 bg-slate-950 hover:border-sky-500 text-xs font-bold text-white">
+                    Kipas & Heatsink Processor
                 </button>
                 <button onclick="loadGalleryItem('ssd')" data-item="ssd" class="gal-selector-btn w-full text-left p-3 rounded-xl border border-slate-800 bg-slate-950 hover:border-sky-500 text-xs font-bold text-white">
-                    💾 SSD NVMe M.2 2280
+                    SSD NVMe M.2 2280
                 </button>
                 <button onclick="loadGalleryItem('vga')" data-item="vga" class="gal-selector-btn w-full text-left p-3 rounded-xl border border-slate-800 bg-slate-950 hover:border-sky-500 text-xs font-bold text-white">
-                    🎮 VGA / GPU Card Dual-Fan
+                     VGA NVIDIA GeForce RTX 4080 SUPER
                 </button>
                 <button onclick="loadGalleryItem('psu')" data-item="psu" class="gal-selector-btn w-full text-left p-3 rounded-xl border border-slate-800 bg-slate-950 hover:border-sky-500 text-xs font-bold text-white">
-                    ⚡ Power Supply Unit (PSU)
+                     Power Supply Unit (PSU)
                 </button>
                 <button onclick="loadGalleryItem('cable')" data-item="cable" class="gal-selector-btn w-full text-left p-3 rounded-xl border border-slate-800 bg-slate-950 hover:border-sky-500 text-xs font-bold text-white">
-                    🔌 Kabel Power ATX 24-Pin
+                    Kabel Power ATX 24-Pin
                 </button>
             </div>
 
@@ -235,7 +252,7 @@
 
             <div class="lg:col-span-4 flex flex-col justify-center space-y-3 bg-slate-950/80 border border-slate-800 rounded-2xl p-5">
                 <span class="text-xs font-bold uppercase tracking-wider text-sky-400">Identifikasi Perangkat Keras</span>
-                <h3 id="gal-title" class="text-xl font-extrabold text-white">Motherboard ATX Z790-PRO</h3>
+                <h3 id="gal-title" class="text-xl font-extrabold text-white">Motherboard ATX Z790-PRO DDR4</h3>
                 <p id="gal-subtitle" class="text-xs text-emerald-400 font-semibold"></p>
 
                 <div class="p-3 rounded-xl bg-slate-900 border border-slate-800">
@@ -316,7 +333,7 @@
         <div class="w-full max-w-4xl aspect-video rounded-2xl overflow-hidden border-2 border-slate-700 shadow-2xl flex flex-col relative"
              style="background: radial-gradient(circle at 30% 30%, #38bdf8 0%, #1d4ed8 45%, #0f172a 100%);">
             <div class="bg-slate-950/75 px-4 py-2 flex items-center justify-between text-xs text-slate-200 border-b border-white/10">
-                <span class="font-semibold">🖥️ Tampilan Monitor PC — Windows 11 Pro Education (SIM-HARDWARE)</span>
+                <span class="font-semibold">🖥️ Tampilan Monitor PC — Windows 11 Pro Education (SIMULATOR HARDWARE)</span>
                 <button onclick="closeWindowsModal()" class="px-2.5 py-1 rounded bg-rose-600 hover:bg-rose-500 text-white font-bold">✕ Tutup Layar</button>
             </div>
 
@@ -341,19 +358,19 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mono text-[11px]">
                             <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800">
                                 <span class="text-slate-400 block">Processor (CPU):</span>
-                                <span class="text-sky-300 font-bold">Intel Core i7-13700K @ 5.40GHz</span>
+                                <span class="text-sky-300 font-bold">Intel Core i9-14900K @ 6.00GHz</span>
                             </div>
                             <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800">
                                 <span class="text-slate-400 block">Memory (RAM):</span>
-                                <span class="text-emerald-300 font-bold">16.0 GB DDR4-3200 Dual Channel</span>
+                                <span class="text-emerald-300 font-bold">16.0 GB DDR4-3200 Green PCB</span>
                             </div>
                             <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800">
                                 <span class="text-slate-400 block">Display Adapter (VGA):</span>
-                                <span class="text-purple-300 font-bold">NVIDIA GeForce RTX 8GB GDDR6</span>
+                                <span class="text-purple-300 font-bold">NVIDIA GeForce RTX 4080 SUPER 16GB GDDR6X</span>
                             </div>
                             <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800">
                                 <span class="text-slate-400 block">Storage & Power:</span>
-                                <span class="text-amber-300 font-bold">1TB NVMe M.2 SSD • PSU 650W OK</span>
+                                <span class="text-amber-300 font-bold">1TB NVMe M.2 SSD • PSU 850W Gold OK</span>
                             </div>
                         </div>
                     </div>
@@ -377,13 +394,13 @@
             <div class="text-center space-y-2">
                 <p class="text-xs font-bold uppercase tracking-[0.2em] text-sky-700">SMPIT Sahabat Alam • Mata Pelajaran TIK / Informatika</p>
                 <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">SERTIFIKAT KOMPETENSI PRAKTIKUM</h2>
-                <p class="text-xs text-slate-500">Perakitan Perangkat Keras Komputer 3D (SIM-HARDWARE 3D PRO)</p>
+                <p class="text-xs text-slate-500">Perakitan Perangkat Keras Komputer 3D (SIMULATOR HARDWARE 3D PRO)</p>
                 <div class="py-3">
                     <p class="text-xs text-slate-500 mb-1">Diberikan kepada:</p>
                     <h3 id="cert-student-name" class="text-2xl font-extrabold text-sky-800 border-b-2 border-slate-300 inline-block px-8 pb-1">
-                        Ahmad Fauzan
+                        Nama Siswa
                     </h3>
-                    <p id="cert-student-class" class="text-xs font-semibold text-slate-600 mt-1">Kelas VII-A</p>
+                    <p id="cert-student-class" class="text-xs font-semibold text-slate-600 mt-1">Kelas belum diisi</p>
                 </div>
                 <p class="text-xs sm:text-sm text-slate-700 max-w-lg mx-auto leading-relaxed">
                     Telah berhasil mengidentifikasi bentuk fisik dan fungsi komponen perangkat keras komputer serta menyelesaikan praktikum perakitan PC 3D hingga sistem operasi Windows menyala normal.
@@ -415,8 +432,10 @@
         </div>
     </div>
 
-    <script src="/static/js/textures_pbr.js"></script>
-    <script src="/static/js/models_3d.js"></script>
-    <script src="/static/js/main.js"></script>
+    <script>
+        document.write('<script src="' + window.__STATIC_PREFIX__ + '/js/textures_pbr.js?v=20261120-student-mission-ram-single-cooler-separate-v1"><\/script>');
+        document.write('<script src="' + window.__STATIC_PREFIX__ + '/js/models_3d.js?v=20261120-student-mission-ram-single-cooler-separate-v1"><\/script>');
+        document.write('<script src="' + window.__STATIC_PREFIX__ + '/js/main.js?v=20261120-student-mission-ram-single-cooler-separate-v1"><\/script>');
+    </script>
 </body>
 </html>

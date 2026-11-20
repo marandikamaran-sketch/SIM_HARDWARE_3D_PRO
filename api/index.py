@@ -50,6 +50,11 @@ def home():
     return render_template("index.html")
 
 
+@app.route("/export_models.html", methods=["GET"])
+def export_models_page():
+    return send_from_directory(str(PROJECT_ROOT), "export_models.html")
+
+
 @app.route("/static/<path:filename>", methods=["GET"])
 def serve_static_fallback(filename):
     return send_from_directory(str(PROJECT_ROOT / "static"), filename)

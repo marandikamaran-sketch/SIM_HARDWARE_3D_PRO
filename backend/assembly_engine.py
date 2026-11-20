@@ -60,7 +60,7 @@ def validate_component_drop(component_id: str, target_slot: str, installed: list
 
 def evaluate_power_boot(installed: list) -> dict:
     """Mengevaluasi status sistem saat tombol Power di casing ditekan."""
-    required_parts = ["cpu", "ram", "ssd", "vga", "psu", "cable"]
+    required_parts = ["cpu", "cpuCooler", "ram1", "ram2", "ssd", "vga", "psu", "cable"]
     missing_names = [HARDWARE_CATALOG[pid]["name"] for pid in required_parts if pid not in installed]
 
     if missing_names:
@@ -75,10 +75,13 @@ def evaluate_power_boot(installed: list) -> dict:
             detail = (
                 "POST BIOS Gagal: Processor (CPU) belum terpasang pada Soket LGA1700 di tengah motherboard!"
             )
-        elif "ram" not in installed:
+        elif "cpuCooler" not in installed:
+            error_code = "ERR_CPU_COOLER_MISSING"
+            detail = "POST BIOS belum dapat dilanjutkan: kipas dan heatsink pendingin processor belum dipasang di atas CPU."
+        elif "ram1" not in installed or "ram2" not in installed:
             error_code = "ERR_MEMORY_MISSING (1 Long, 2 Short Beeps)"
             detail = (
-                "POST BIOS Gagal: Keping Memory RAM belum terpasang di Slot DIMM motherboard!"
+                "POST BIOS Gagal: Pasang kedua keping RAM satu per satu pada slot DIMM A2 dan B2!"
             )
         elif "vga" not in installed:
             error_code = "ERR_NO_VIDEO_OUTPUT (1 Long, 3 Short Beeps)"
@@ -102,6 +105,6 @@ def evaluate_power_boot(installed: list) -> dict:
         "boot_success": True,
         "error_code": "POST_OK_1_BEEP",
         "missing": [],
-        "message": "Semua 6 komponen terpasang sempurna! POST BIOS berhasil dan sistem operasi Windows 11 tampil di monitor."
+        "message": "Semua 8 komponen terpasang sempurna! POST BIOS berhasil dan sistem operasi Windows 11 tampil di monitor."
     }
 

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ekspor Model 3D — SIM-HARDWARE 3D PRO</title>
+<style>
+*{box-sizing:border-box}body{margin:0;padding:24px;background:#081426;color:#e8f2ff;font-family:system-ui,Segoe UI,Arial,sans-serif}
+main{max-width:850px;margin:auto}.card{background:#10233b;border:1px solid #244767;border-radius:16px;padding:20px;margin:14px 0}
+h1{color:#63d3ff;margin:0 0 8px}.muted{color:#a9c4dc;font-size:14px;line-height:1.5}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px}
+button{width:100%;padding:13px;border:1px solid #397eaa;border-radius:10px;background:#16466a;color:#f3f9ff;font-weight:700;cursor:pointer}
+button:disabled{opacity:.5;cursor:wait}button:hover:not(:disabled){background:#12618b}
+#status{min-height:26px;color:#ffe28a;font-size:14px;margin-top:12px}.tag{display:inline-block;padding:4px 9px;border-radius:99px;background:#0e604a;color:#9cf2cc;font-size:12px}
+code{color:#8ee3ff}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/exporters/GLTFExporter.js"></script>
+<script src="./static/js/textures_pbr.js"></script>
+<script src="./static/js/models_3d.js"></script>
+</head>
+<body><main>
+ <div class="card">
+  <span class="tag">SIM-HARDWARE 3D PRO</span>
+  <h1>Ekspor Komponen 3D</h1>
+  <p class="muted">Unduh komponen 3D terbaru yang dibuat secara prosedural di proyek ini menjadi file <b>.GLB</b>. Motherboard kini mencakup soket LGA1700, slot DIMM, slot M.2, slot PCIe, VRM, heatsink, port dan detail PCB; CPU, RAM individual, CPU cooler, SSD, VGA, dan PSU memakai builder yang sama dengan tampilan perakitan serta galeri. GLB adalah model 3D, bukan gambar datar. File ini dapat dimuat kembali ke halaman web menggunakan Three.js GLTFLoader atau software 3D seperti Blender.</p>
+  <p class="muted"><b>Petunjuk:</b> letakkan halaman ini di folder utama proyek, sejajar dengan <code>index.html</code>, kemudian buka melalui server lokal sesuai petunjuk README. Koneksi internet diperlukan untuk memuat Three.js dari CDN.</p>
+ </div>
+ <div class="card">
+  <h2>Komponen yang tersedia</h2>
+  <div class="grid">
+   <button data-model="motherboard">Unduh Motherboard ATX Detail (.glb)</button>
+   <button data-model="cpu">Unduh Processor LGA1700 Detail (.glb)</button>
+   <button data-model="ram">Unduh satu modul RAM DDR4 8GB (.glb)</button>
+   <button data-model="cpuCooler">Unduh Kipas & Heatsink CPU (.glb)</button>
+   <button data-model="ssd">Unduh SSD M.2 2280 Detail (.glb)</button>
+   <button data-model="vga">Unduh VGA Triple-Fan Detail (.glb)</button>
+   <button data-model="psu">Unduh PSU Modular 850W Detail (.glb)</button>
+   <button data-model="cable">Unduh Kabel Power (.glb)</button>
+  </div>
+  <div id="status" role="status" aria-live="polite">Menyiapkan model 3D…</div>
+ </div>
+ <div class="card">
+  <h2>Folder tujuan yang disarankan</h2>
+  <p class="muted">Setelah diunduh, pindahkan file GLB ke <code>static/models/</code> pada proyek web media pembelajaran. Buat folder <code>models</code> jika belum ada.</p>
+  <p class="muted">Contoh pemuatan di halaman Three.js: gunakan <code>GLTFLoader</code> untuk membuka file seperti <code>./static/models/ram.glb</code>. Model perlu disesuaikan posisi, skala, rotasi, dan titik snap slot pada sistem perakitan.</p>
+ </div>
+</main>
+<script>
+(function(){
+ const status=document.getElementById('status');
+ const builders={
+  motherboard:()=>window.HardwareModels3D.buildMotherboardAssembly(),
+  cpu:()=>window.HardwareModels3D.buildCPU3D(),
+  ram:()=>window.HardwareModels3D.buildRAM3D(true),
+  cpuCooler:()=>window.HardwareModels3D.buildCPUCooler3D([]),
+  ssd:()=>window.HardwareModels3D.buildSSD3D(),
+  vga:()=>window.HardwareModels3D.buildVGA3D([]),
+  psu:()=>window.HardwareModels3D.buildPSU3D(),
+  cable:()=>window.HardwareModels3D.buildCable3D()
+ };
+ function setStatus(message){status.textContent=message;}
+ if(!window.THREE||!THREE.GLTFExporter||!window.HardwareModels3D){
+  setStatus('Gagal memuat library atau model. Jalankan halaman melalui server lokal dan periksa koneksi internet.');
+  document.querySelectorAll('button').forEach(b=>b.disabled=true);return;
+ }
+ setStatus('Model siap diekspor. Pilih komponen yang ingin diunduh.');
+ document.querySelectorAll('button[data-model]').forEach(button=>{
+  button.addEventListener('click',()=>{
+   const key=button.dataset.model;button.disabled=true;setStatus('Mengekspor '+key.toUpperCase()+'…');
+   try{
+    const model=builders[key]();
+    if(!model)throw new Error('Model tidak berhasil dibuat');
+    const exporter=new THREE.GLTFExporter();
+    exporter.parse(model,(result)=>{
+     try{
+      const blob=new Blob([result],{type:'model/gltf-binary'});
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement('a');a.href=url;a.download=key==='motherboard'?'motherboard-3d.glb':(key==='ram'?'ram-ddr4-8gb-module.glb':key==='cpuCooler'?'cpu-cooler-120mm.glb':key+'-3d.glb');
+      document.body.appendChild(a);a.click();a.remove();
+      setTimeout(()=>URL.revokeObjectURL(url),2000);
+      setStatus('Berhasil: '+a.download+' sudah mulai diunduh.');
+     }catch(err){setStatus('Gagal membuat file: '+err.message);}
+     button.disabled=false;
+    },{binary:true,onlyVisible:true});
+   }catch(err){setStatus('Ekspor gagal: '+err.message);button.disabled=false;console.error(err);}
+  });
+ });
+})();
+</script>
+</body>
+</html>

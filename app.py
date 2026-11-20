@@ -97,6 +97,8 @@ class LocalFallbackHandler(BaseHTTPRequestHandler):
 
         if path == "/" or path == "/index.html":
             self._send_file(BASE_DIR / "templates" / "index.html")
+        elif path == "/export_models.html":
+            self._send_file(BASE_DIR / "export_models.html")
         elif path.startswith("/static/"):
             rel = path.lstrip("/")
             safe_target = (BASE_DIR / rel).resolve()
