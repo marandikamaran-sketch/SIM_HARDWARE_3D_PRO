@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Ekspor Model 3D — SIM-HARDWARE 3D PRO</title>
+<title>Ekspor Model 3D — SIMULATOR HARDWARE 3D V 1.0</title>
 <style>
 *{box-sizing:border-box}body{margin:0;padding:24px;background:#081426;color:#e8f2ff;font-family:system-ui,Segoe UI,Arial,sans-serif}
 main{max-width:850px;margin:auto}.card{background:#10233b;border:1px solid #244767;border-radius:16px;padding:20px;margin:14px 0}
@@ -21,9 +21,9 @@ code{color:#8ee3ff}
 </head>
 <body><main>
  <div class="card">
-  <span class="tag">SIM-HARDWARE 3D PRO</span>
+  <span class="tag">SIMULATOR HARDWARE 3D V 1.0</span>
   <h1>Ekspor Komponen 3D</h1>
-  <p class="muted">Unduh komponen 3D terbaru yang dibuat secara prosedural di proyek ini menjadi file <b>.GLB</b>. Motherboard kini mencakup soket LGA1700, slot DIMM, slot M.2, slot PCIe, VRM, heatsink, port dan detail PCB; CPU, RAM individual, CPU cooler, SSD, VGA, dan PSU memakai builder yang sama dengan tampilan perakitan serta galeri. GLB adalah model 3D, bukan gambar datar. File ini dapat dimuat kembali ke halaman web menggunakan Three.js GLTFLoader atau software 3D seperti Blender.</p>
+  <p class="muted">Unduh komponen 3D terbaru yang dibuat secara prosedural di proyek ini menjadi file <b>.GLB</b>. Motherboard kini mencakup soket LGA1700, slot DIMM, slot M.2, slot PCIe, VRM, heatsink, port dan detail PCB; CPU, RAM individual, aplikator thermal paste, CPU cooler, SSD, VGA, dan PSU memakai builder yang sama dengan tampilan perakitan serta galeri. GLB adalah model 3D, bukan gambar datar. File ini dapat dimuat kembali ke halaman web menggunakan Three.js GLTFLoader atau software 3D seperti Blender.</p>
   <p class="muted"><b>Petunjuk:</b> letakkan halaman ini di folder utama proyek, sejajar dengan <code>index.html</code>, kemudian buka melalui server lokal sesuai petunjuk README. Koneksi internet diperlukan untuk memuat Three.js dari CDN.</p>
  </div>
  <div class="card">
@@ -32,6 +32,7 @@ code{color:#8ee3ff}
    <button data-model="motherboard">Unduh Motherboard ATX Detail (.glb)</button>
    <button data-model="cpu">Unduh Processor LGA1700 Detail (.glb)</button>
    <button data-model="ram">Unduh satu modul RAM DDR4 8GB (.glb)</button>
+   <button data-model="thermalPaste">Unduh Aplikator Thermal Paste (.glb)</button>
    <button data-model="cpuCooler">Unduh Kipas & Heatsink CPU (.glb)</button>
    <button data-model="ssd">Unduh SSD M.2 2280 Detail (.glb)</button>
    <button data-model="vga">Unduh VGA Triple-Fan Detail (.glb)</button>
@@ -52,6 +53,7 @@ code{color:#8ee3ff}
  const builders={
   motherboard:()=>window.HardwareModels3D.buildMotherboardAssembly(),
   cpu:()=>window.HardwareModels3D.buildCPU3D(),
+  thermalPaste:()=>window.HardwareModels3D.buildThermalPaste3D(),
   ram:()=>window.HardwareModels3D.buildRAM3D(true),
   cpuCooler:()=>window.HardwareModels3D.buildCPUCooler3D([]),
   ssd:()=>window.HardwareModels3D.buildSSD3D(),
@@ -76,7 +78,7 @@ code{color:#8ee3ff}
      try{
       const blob=new Blob([result],{type:'model/gltf-binary'});
       const url=URL.createObjectURL(blob);
-      const a=document.createElement('a');a.href=url;a.download=key==='motherboard'?'motherboard-3d.glb':(key==='ram'?'ram-ddr4-8gb-module.glb':key==='cpuCooler'?'cpu-cooler-120mm.glb':key+'-3d.glb');
+      const a=document.createElement('a');a.href=url;a.download=key==='motherboard'?'motherboard-3d.glb':(key==='ram'?'ram-ddr4-8gb-module.glb':key==='thermalPaste'?'thermal-paste-applicator.glb':key==='cpuCooler'?'cpu-cooler-120mm.glb':key+'-3d.glb');
       document.body.appendChild(a);a.click();a.remove();
       setTimeout(()=>URL.revokeObjectURL(url),2000);
       setStatus('Berhasil: '+a.download+' sudah mulai diunduh.');

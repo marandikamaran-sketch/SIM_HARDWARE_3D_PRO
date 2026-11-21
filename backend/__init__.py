@@ -1,1 +1,1 @@
-"""Backend package untuk SIM-HARDWARE 3D Pro (Vercel & Local Ready)."""
+"""Backend package untuk SIMULATOR HARDWARE 3D V 1.0 (Vercel & Local Ready)."""

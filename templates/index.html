@@ -3,19 +3,77 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="SIMulator HARDWARE 3D V 1.O — Media Pembelajaran Interaktif Perakitan Perangkat Keras Komputer 3D Realistis Kelas VII SMP/MTs." />
-    <meta property="og:title" content="SIMulator HARDWARE 3D V 1.OO | Simulator Rakit PC Realistis" />
+    <meta name="description" content="SIMULATOR HARDWARE 3D V 1.0 — Media Pembelajaran Interaktif Perakitan Perangkat Keras Komputer 3D Realistis Kelas VII SMP/MTs." />
+    <meta property="og:title" content="SIMULATOR HARDWARE 3D V 1.0 | Simulator Rakit PC Realistis" />
     <meta property="og:description" content="Belajar merakit komponen komputer asli dalam tampilan 3D interaktif lengkap dengan kuis evaluasi & sertifikat praktikum." />
-    <title>SIMULATOR HARDWARE 3D V 1.O | Misi Rakit Komputer 3D</title>
+    <title>SIMULATOR HARDWARE 3D V 1.0 | Misi Rakit Komputer 3D</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <script>
-        window.__STATIC_PREFIX__ = (window.location.protocol === 'file:') ? './static' : './static';
-        document.write('<link rel="stylesheet" href="' + window.__STATIC_PREFIX__ + '/css/style.css" />');
+        // Resolve static assets relative to the deployed page. This supports
+        // root hosting (Flask/Vercel), GitHub Pages project subpaths, and file://.
+        (function () {
+            var candidates = [];
+            function add(value) {
+                if (value && !candidates.includes(value)) candidates.push(value.replace(/\/$/, ''));
+            }
+            if (window.location.protocol === 'file:') {
+                var inTemplates = /\/templates\/[^/]*$/i.test(decodeURIComponent(window.location.pathname));
+                add(new URL(inTemplates ? '../static/' : './static/', window.location.href).href);
+            } else {
+                add(new URL('./static/', window.location.href).pathname);
+                add('/static'); // Flask/Vercel root fallback
+            }
+            window.__STATIC_PREFIX_CANDIDATES__ = candidates;
+            window.__STATIC_PREFIX__ = candidates[0] || './static';
+
+            window.__SIM_ASSET_PREFIX_PROMISE__ = new Promise(function (resolve) {
+                var index = 0;
+                function tryStylesheet() {
+                    if (index >= candidates.length) {
+                        resolve(window.__STATIC_PREFIX__);
+                        return;
+                    }
+                    var prefix = candidates[index++];
+                    var link = document.createElement('link');
+                    link.rel = 'stylesheet';
+                    link.href = prefix + '/css/style.css?v=sim-assets-relpath-20261121';
+                    link.onload = function () {
+                        window.__STATIC_PREFIX__ = prefix;
+                        window.__SIM_CSS_READY__ = true;
+                        resolve(prefix);
+                    };
+                    link.onerror = function () {
+                        link.remove();
+                        tryStylesheet();
+                    };
+                    document.head.appendChild(link);
+                }
+                tryStylesheet();
+            });
+
+            window.__SIM_SHOW_BOOT_ERROR__ = function (message) {
+                var panel = document.getElementById('three-load-error');
+                var text = document.getElementById('three-load-error-message');
+                if (text) text.textContent = message;
+                if (panel) {
+                    panel.hidden = false;
+                    panel.style.cssText += ';display:flex;position:absolute;inset:12px;z-index:20;align-items:center;justify-content:center;padding:18px;background:rgba(8,18,36,.94);color:#fff;border-radius:14px;';
+                } else {
+                    var target = document.getElementById('viewport-wrapper') || document.body;
+                    var box = document.createElement('div');
+                    box.textContent = message;
+                    box.style.cssText = 'position:fixed;z-index:99999;left:12px;right:12px;bottom:12px;padding:16px;background:#7f1d1d;color:white;border:2px solid #fca5a5;border-radius:12px;font:600 14px/1.5 system-ui';
+                    target.appendChild(box);
+                }
+                var status = document.getElementById('status-message');
+                if (status) status.textContent = message;
+                var title = document.getElementById('status-title');
+                if (title) title.textContent = 'Simulasi 3D belum siap';
+            };
+        })();
     </script>
 </head>
-<body class="min-h-screen flex flex-col">
+<body class="min-h-screen flex flex-col theme-light">
 
     <!-- HEADER & MULTI-MODULE NAVIGATION -->
     <header class="bg-slate-950/95 backdrop-blur-md border-b border-slate-800 sticky top-0 z-40">
@@ -26,7 +84,7 @@
                 </div>
                 <div>
                     <div class="flex items-center gap-2">
-                        <h1 class="font-extrabold text-base sm:text-lg text-white tracking-tight">SIMULATOR HARDWARE 3D V 1.O</h1>
+                        <h1 class="font-extrabold text-base sm:text-lg text-white tracking-tight">SIMULATOR HARDWARE 3D V 1.0</h1>
                         <span class="px-2 py-0.5 text-[10px] font-bold uppercase rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
                             Cloud & Web Ready
                         </span>
@@ -38,16 +96,16 @@
             <!-- 4 MODUL UTAMA -->
             <nav class="flex flex-wrap items-center gap-1.5 bg-slate-900/90 p-1 rounded-2xl border border-slate-800">
                 <button onclick="switchTab('assembly')" data-tab="assembly" class="tab-btn active px-3.5 py-1.5 rounded-xl text-xs font-bold border border-transparent text-slate-300">
-                    1. Rakit PC 3D Realistis
+                    🛠️ 1. Rakit PC 3D Realistis
                 </button>
                 <button onclick="switchTab('gallery')" data-tab="gallery" class="tab-btn px-3.5 py-1.5 rounded-xl text-xs font-bold border border-transparent text-slate-300">
-                    2. Kenali Komponen Asli 360°
+                    🔍 2. Kenali Komponen Asli 360°
                 </button>
                 <button onclick="switchTab('quiz')" data-tab="quiz" class="tab-btn px-3.5 py-1.5 rounded-xl text-xs font-bold border border-transparent text-slate-300">
-                    3. Kuis Evaluasi
+                    📝 3. Kuis Evaluasi
                 </button>
                 <button onclick="switchTab('teacher')" data-tab="teacher" class="tab-btn px-3.5 py-1.5 rounded-xl text-xs font-bold border border-transparent text-slate-300">
-                   4. Rekap Nilai Guru
+                    📊 4. Rekap Nilai Guru
                 </button>
             </nav>
 
@@ -87,7 +145,7 @@
                 </div>
                 <div class="rounded-xl border border-sky-500/25 bg-sky-500/10 p-3 mb-3">
                     <p class="text-xs font-bold text-sky-300 mb-1">🎯 Tantangan Praktikum</p>
-                    <p class="text-[11px] text-slate-300 leading-relaxed">Seret komponen satu per satu ke tempat yang cocok. Urutannya: Processor → kipas pendingin → RAM A2 → RAM B2 → SSD → VGA → PSU → kabel daya. Perhatikan petunjuk saat memasang!</p>
+                    <p class="text-[11px] text-slate-300 leading-relaxed">Seret komponen satu per satu ke tempat yang cocok. Urutannya: Processor → Thermal Paste → kipas/heatsink → RAM A2 → RAM B2 → SSD → VGA → PSU → kabel daya. Perhatikan petunjuk saat memasang!</p>
                 </div>
                 <div id="parts-list" class="space-y-2"></div>
             </div>
@@ -138,13 +196,13 @@
                     <div>
                         <h3 id="status-title" class="text-sm font-bold text-white">Siap memulai misi perakitan komputer!</h3>
                         <p id="status-message" class="text-xs text-slate-300">
-                            Mulai dengan memasang <strong>Processor</strong>, lalu pendingin CPU, dua keping <strong>RAM</strong> satu per satu, <strong>SSD</strong>, <strong>VGA</strong>, <strong>PSU</strong>, dan kabel daya.
+                            Mulai dengan memasang <strong>Processor</strong>, mengoleskan <strong>Thermal Paste</strong>, memasang pendingin CPU, lalu RAM A2 dan B2 satu per satu, SSD, VGA, PSU, dan kabel daya.
                         </p>
                     </div>
                 </div>
 
                 <div class="flex items-center gap-3 bg-slate-950/90 border border-slate-800 rounded-xl px-3 py-1.5 text-xs">
-                    <div>Terpasang: <span id="hud-installed" class="font-bold text-emerald-400 mono">0/8</span></div>
+                    <div>Terpasang: <span id="hud-installed" class="font-bold text-emerald-400 mono">0/9</span></div>
                     <div class="h-3.5 w-px bg-slate-800"></div>
                     <div>Skor: <span id="hud-score" class="font-bold text-sky-400 mono">100</span></div>
                     <div class="h-3.5 w-px bg-slate-800"></div>
@@ -153,8 +211,21 @@
             </div>
 
             <!-- 3D CANVAS -->
-            <div id="viewport-wrapper" class="border border-slate-800">
-                <canvas id="three-canvas"></canvas>
+            <div id="viewport-wrapper" class="border border-slate-800" style="position:relative;width:100%;height:min(68vh,610px);min-height:420px;overflow:hidden;border-radius:18px;background:radial-gradient(circle at 50% 30%,#dbeafe,#a8c5e5);">
+                <canvas id="three-canvas" style="display:block;width:100%;height:100%;background:transparent;touch-action:none;"></canvas>
+                <div id="three-load-error" class="three-load-error" hidden role="alert">
+                    <div class="three-load-error-card">
+                        <div class="three-load-error-icon">🧩</div>
+                        <h3>Simulasi 3D belum berhasil dimuat</h3>
+                        <p id="three-load-error-message">Mesin grafis 3D belum tersedia di browser ini.</p>
+                        <ol>
+                            <li>Jalankan aplikasi dengan <strong>python app.py</strong>, bukan membuka file HTML dari folder yang salah.</li>
+                            <li>Pastikan laptop/PID terhubung ke internet agar library Three.js dapat dimuat.</li>
+                            <li>Gunakan Chrome atau Edge versi terbaru, lalu muat ulang halaman.</li>
+                        </ol>
+                        <button type="button" onclick="location.reload()">↻ Muat ulang simulasi</button>
+                    </div>
+                </div>
 
                 <!-- CAMERA CONTROLS -->
                 <div class="absolute top-3 left-3 right-3 flex flex-wrap items-center justify-between gap-2 pointer-events-none">
@@ -202,7 +273,7 @@
             </div>
 
             <!-- CHECKLIST STATUS -->
-            <div id="checklist-bar" class="grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-8 gap-2"></div>
+            <div id="checklist-bar" class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-9 gap-2"></div>
         </section>
     </main>
 
@@ -219,25 +290,28 @@
                     🟩 Motherboard ATX Z790 DDR4
                 </button>
                 <button onclick="loadGalleryItem('cpu')" data-item="cpu" class="gal-selector-btn w-full text-left p-3 rounded-xl border border-slate-800 bg-slate-950 hover:border-sky-500 text-xs font-bold text-white">
-                     Processor (CPU) LGA1700
+                    🔲 Processor (CPU) LGA1700
                 </button>
                 <button onclick="loadGalleryItem('ram1')" data-item="ram1" class="gal-selector-btn w-full text-left p-3 rounded-xl border border-slate-800 bg-slate-950 hover:border-sky-500 text-xs font-bold text-white">
-                    Memory RAM DDR4 Green PCB
+                    📏 Memory RAM DDR4 Green PCB
+                </button>
+                <button onclick="loadGalleryItem('thermalPaste')" data-item="thermalPaste" class="gal-selector-btn w-full text-left p-3 rounded-xl border border-slate-800 bg-slate-950 hover:border-sky-500 text-xs font-bold text-white">
+                    🧴 Thermal Paste (Pasta Termal)
                 </button>
                 <button onclick="loadGalleryItem('cpuCooler')" data-item="cpuCooler" class="gal-selector-btn w-full text-left p-3 rounded-xl border border-slate-800 bg-slate-950 hover:border-sky-500 text-xs font-bold text-white">
-                    Kipas & Heatsink Processor
+                    🌀 Kipas & Heatsink Processor
                 </button>
                 <button onclick="loadGalleryItem('ssd')" data-item="ssd" class="gal-selector-btn w-full text-left p-3 rounded-xl border border-slate-800 bg-slate-950 hover:border-sky-500 text-xs font-bold text-white">
-                    SSD NVMe M.2 2280
+                    💾 SSD NVMe M.2 2280
                 </button>
                 <button onclick="loadGalleryItem('vga')" data-item="vga" class="gal-selector-btn w-full text-left p-3 rounded-xl border border-slate-800 bg-slate-950 hover:border-sky-500 text-xs font-bold text-white">
-                     VGA NVIDIA GeForce RTX 4080 SUPER
+                    🎮 VGA NVIDIA GeForce RTX 4080 SUPER
                 </button>
                 <button onclick="loadGalleryItem('psu')" data-item="psu" class="gal-selector-btn w-full text-left p-3 rounded-xl border border-slate-800 bg-slate-950 hover:border-sky-500 text-xs font-bold text-white">
-                     Power Supply Unit (PSU)
+                    ⚡ Power Supply Unit (PSU)
                 </button>
                 <button onclick="loadGalleryItem('cable')" data-item="cable" class="gal-selector-btn w-full text-left p-3 rounded-xl border border-slate-800 bg-slate-950 hover:border-sky-500 text-xs font-bold text-white">
-                    Kabel Power ATX 24-Pin
+                    🔌 Kabel Power ATX 24-Pin
                 </button>
             </div>
 
@@ -333,7 +407,7 @@
         <div class="w-full max-w-4xl aspect-video rounded-2xl overflow-hidden border-2 border-slate-700 shadow-2xl flex flex-col relative"
              style="background: radial-gradient(circle at 30% 30%, #38bdf8 0%, #1d4ed8 45%, #0f172a 100%);">
             <div class="bg-slate-950/75 px-4 py-2 flex items-center justify-between text-xs text-slate-200 border-b border-white/10">
-                <span class="font-semibold">🖥️ Tampilan Monitor PC — Windows 11 Pro Education (SIMULATOR HARDWARE)</span>
+                <span class="font-semibold">🖥️ Tampilan Monitor PC — Windows 11 Pro Education (SIMULATOR HARDWARE 3D V 1.0)</span>
                 <button onclick="closeWindowsModal()" class="px-2.5 py-1 rounded bg-rose-600 hover:bg-rose-500 text-white font-bold">✕ Tutup Layar</button>
             </div>
 
@@ -394,7 +468,7 @@
             <div class="text-center space-y-2">
                 <p class="text-xs font-bold uppercase tracking-[0.2em] text-sky-700">SMPIT Sahabat Alam • Mata Pelajaran TIK / Informatika</p>
                 <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">SERTIFIKAT KOMPETENSI PRAKTIKUM</h2>
-                <p class="text-xs text-slate-500">Perakitan Perangkat Keras Komputer 3D (SIMULATOR HARDWARE 3D PRO)</p>
+                <p class="text-xs text-slate-500">Perakitan Perangkat Keras Komputer 3D (SIMULATOR HARDWARE 3D V 1.0)</p>
                 <div class="py-3">
                     <p class="text-xs text-slate-500 mb-1">Diberikan kepada:</p>
                     <h3 id="cert-student-name" class="text-2xl font-extrabold text-sky-800 border-b-2 border-slate-300 inline-block px-8 pb-1">
@@ -433,9 +507,66 @@
     </div>
 
     <script>
-        document.write('<script src="' + window.__STATIC_PREFIX__ + '/js/textures_pbr.js?v=20261120-student-mission-ram-single-cooler-separate-v1"><\/script>');
-        document.write('<script src="' + window.__STATIC_PREFIX__ + '/js/models_3d.js?v=20261120-student-mission-ram-single-cooler-separate-v1"><\/script>');
-        document.write('<script src="' + window.__STATIC_PREFIX__ + '/js/main.js?v=20261120-student-mission-ram-single-cooler-separate-v1"><\/script>');
+        (function () {
+            function loadScript(url) {
+                return new Promise(function (resolve, reject) {
+                    var script = document.createElement('script');
+                    script.src = url;
+                    script.async = false;
+                    script.onload = function () { resolve(script); };
+                    script.onerror = function () { script.remove(); reject(new Error('Gagal memuat ' + url)); };
+                    document.body.appendChild(script);
+                });
+            }
+            function loadFirst(urls, label) {
+                var i = 0;
+                function next() {
+                    if (i >= urls.length) return Promise.reject(new Error(label + ' tidak dapat diunduh dari CDN. Periksa koneksi internet atau izin jaringan sekolah.'));
+                    return loadScript(urls[i++]).catch(next);
+                }
+                return next();
+            }
+            async function boot() {
+                try {
+                    var prefix = await window.__SIM_ASSET_PREFIX_PROMISE__;
+                    await loadFirst([
+                        'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js',
+                        'https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js',
+                        'https://unpkg.com/three@0.128.0/build/three.min.js'
+                    ], 'Three.js');
+                    await loadFirst([
+                        'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js',
+                        'https://unpkg.com/three@0.128.0/examples/js/controls/OrbitControls.js',
+                        'https://cdnjs.cloudflare.com/ajax/libs/three.js/0.128.0/examples/js/controls/OrbitControls.js'
+                    ], 'OrbitControls');
+
+                    var prefixes = (window.__STATIC_PREFIX_CANDIDATES__ || [prefix]).slice();
+                    if (prefixes[0] !== prefix) prefixes.unshift(prefix);
+                    var errors = [];
+                    for (var i = 0; i < prefixes.length; i++) {
+                        var p = prefixes[i];
+                        try {
+                            window.__STATIC_PREFIX__ = p;
+                            await loadScript(p + '/js/textures_pbr.js?v=sim-assets-relpath-20261121');
+                            await loadScript(p + '/js/models_3d.js?v=sim-assets-relpath-20261121');
+                            await loadScript(p + '/js/main.js?v=sim-assets-relpath-20261121');
+                            window.__SIM_3D_BOOTED__ = true;
+                            return;
+                        } catch (e) {
+                            errors.push(e.message);
+                            // Clear half-loaded globals before trying another static base.
+                            window.HardwareTextures = undefined;
+                            window.HardwareModels3D = undefined;
+                        }
+                    }
+                    throw new Error('File aplikasi 3D tidak ditemukan. Jalur yang dicoba: ' + prefixes.join(', ') + '. ' + errors.join(' | '));
+                } catch (error) {
+                    console.error('[SIMULATOR HARDWARE 3D V 1.0 bootstrap]', error);
+                    window.__SIM_SHOW_BOOT_ERROR__(error.message || String(error));
+                }
+            }
+            boot();
+        })();
     </script>
-</body>
+    </body>
 </html>

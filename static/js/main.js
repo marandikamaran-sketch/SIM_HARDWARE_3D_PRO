@@ -14,6 +14,41 @@
     const M = window.HardwareModels3D;
     const LOCAL_BACKUP_KEY = 'sim_hardware_3d_records_v2';
 
+    // Jangan biarkan area 3D kosong tanpa penjelasan bila CDN, file lokal,
+    // atau dukungan WebGL tidak tersedia. Path aset lokal sudah dibuat aman
+    // untuk index.html root dan templates/index.html.
+    function showThreeLoadError(message) {
+        const panel = document.getElementById('three-load-error');
+        const messageNode = document.getElementById('three-load-error-message');
+        if (messageNode) messageNode.textContent = message;
+        if (panel) panel.hidden = false;
+        const statusTitle = document.getElementById('status-title');
+        const statusMessage = document.getElementById('status-message');
+        if (statusTitle) statusTitle.textContent = 'Mesin 3D belum siap';
+        if (statusMessage) statusMessage.textContent = message;
+    }
+
+    // Tampilkan pesan yang dapat dibaca jika inisialisasi/model 3D melempar error.
+    window.addEventListener('error', function (event) {
+        if (event && event.error) {
+            showThreeLoadError('Terjadi kesalahan saat menjalankan simulasi 3D: ' + (event.error.message || event.message || 'Kesalahan JavaScript.'));
+        }
+    });
+    window.addEventListener('unhandledrejection', function (event) {
+        const reason = event && event.reason;
+        showThreeLoadError('Proses 3D gagal: ' + (reason && reason.message ? reason.message : String(reason || 'Kesalahan proses.')));
+    });
+
+    if (!window.THREE || !window.THREE.WebGLRenderer || !window.THREE.OrbitControls || !T || !M) {
+        const missing = [];
+        if (!window.THREE || !window.THREE.WebGLRenderer) missing.push('library Three.js');
+        if (window.THREE && !window.THREE.OrbitControls) missing.push('OrbitControls');
+        if (!T) missing.push('tekstur komponen');
+        if (!M) missing.push('model komponen');
+        showThreeLoadError('Tidak dapat memuat: ' + missing.join(', ') + '. Periksa alamat folder static, koneksi internet, lalu muat ulang.');
+        return;
+    }
+
     const DEFAULT_MOTHERBOARD_META = {
         id: "motherboard",
         name: "Motherboard ATX Z790-PRO DDR4",
@@ -41,6 +76,21 @@
             analogy: "Seperti otak manusia atau koki utama di dapur yang mengolah semua perintah dari pengguna.",
             specs: "24 Core (8P+16E) • 32 Thread • Boost 6.00 GHz • Cache 36 MB • Socket LGA1700"
         },
+        thermalPaste: {
+            id: "thermalPaste",
+            name: "Thermal Paste (Pasta Termal)",
+            short_name: "Thermal Paste",
+            subtitle: "Pasta penghantar panas • aplikator 3D terpisah",
+            category: "Pendingin Processor (Bahan Antarmuka Termal)",
+            target_slot: "slot_thermal_paste",
+            slot_label: "Permukaan IHS processor di tengah soket CPU",
+            order_hint: 2,
+            requires: ["cpu"],
+            physical_appearance: "Aplikator pasta termal berbentuk tabung suntik kecil dengan badan aluminium/plastik, pendorong, tutup, dan ujung nozzle presisi. Pasta berwarna abu-abu metalik diaplikasikan tipis di tengah pelat IHS processor.",
+            description: "Thermal paste membantu mengisi celah mikroskopis antara permukaan processor dan cold plate heatsink agar panas berpindah lebih baik. Dalam latihan ini, siswa memasangnya setelah processor dan sebelum kipas/heatsink CPU.",
+            analogy: "Seperti lapisan tipis bahan penghantar yang membantu panas berpindah dari processor ke pendingin.",
+            specs: "Thermal interface material • Lapisan tipis • Digunakan di antara IHS CPU dan cold plate cooler"
+        },
         cpuCooler: {
             id: "cpuCooler",
             name: "Kipas & Heatsink Processor",
@@ -49,8 +99,8 @@
             category: "Cooling Device (Pendingin Processor)",
             target_slot: "slot_cpu_cooler",
             slot_label: "Dudukan pendingin tepat di atas Processor",
-            order_hint: 2,
-            requires: ["cpu"],
+            order_hint: 3,
+            requires: ["cpu", "thermalPaste"],
             physical_appearance: "Pendingin CPU terpisah dengan cold plate logam, heatpipe tembaga, tumpukan sirip aluminium, rangka kipas 120 mm, rotor bilah, hub tengah, dan empat titik pengunci.",
             description: "Kipas dan heatsink membantu membuang panas dari processor. Komponen ini dipasang setelah processor berada pada soketnya.",
             analogy: "Seperti kipas dan radiator yang membantu mesin tetap berada pada suhu kerja yang aman.",
@@ -64,8 +114,8 @@
             category: "Memory (Memori Sementara)",
             target_slot: "slot_ram_a2",
             slot_label: "Slot DIMM A2 (slot kedua dari arah processor)",
-            order_hint: 3,
-            requires: ["cpu", "cpuCooler"],
+            order_hint: 4,
+            requires: ["cpu", "thermalPaste", "cpuCooler"],
             physical_appearance: "Satu keping modul DDR4 UDIMM dengan PCB hijau gelap, chip DRAM hitam pada kedua sisi, komponen SMD, jalur sirkuit, dan kontak emas 288-pin dengan takik pengunci.",
             description: "RAM menyimpan data sementara yang sedang dipakai komputer. Keping pertama dipasang secara individual pada slot A2.",
             analogy: "Seperti meja belajar pertama untuk meletakkan buku dan alat yang sedang digunakan.",
@@ -79,8 +129,8 @@
             category: "Memory (Memori Sementara)",
             target_slot: "slot_ram_b2",
             slot_label: "Slot DIMM B2 (slot keempat dari arah processor)",
-            order_hint: 4,
-            requires: ["cpu", "cpuCooler", "ram1"],
+            order_hint: 5,
+            requires: ["cpu", "thermalPaste", "cpuCooler", "ram1"],
             physical_appearance: "Satu keping modul DDR4 UDIMM dengan PCB hijau gelap, chip DRAM hitam pada kedua sisi, komponen SMD, jalur sirkuit, dan kontak emas 288-pin dengan takik pengunci.",
             description: "Keping RAM kedua melengkapi pasangan memori 2 × 8 GB. Pasang satu per satu pada slot B2 untuk konfigurasi dual-channel pada contoh motherboard ini.",
             analogy: "Seperti menambahkan meja kerja kedua agar ruang belajar lebih luas.",
@@ -94,7 +144,7 @@
             category: "Storage Device (Perangkat Penyimpanan)",
             target_slot: "slot_ssd",
             slot_label: "Slot M.2 NVMe di Permukaan Motherboard",
-            order_hint: 5,
+            order_hint: 6,
             requires: [],
             physical_appearance: "Modul M.2 2280 sepanjang 80 mm dengan PCB hijau gelap, chip controller NVMe, beberapa paket NAND Flash hitam, komponen SMD, kontak emas M-Key, serta lubang baut pengunci di ujungnya.",
             description: "Solid State Drive (SSD) NVMe M.2 adalah media penyimpanan data berkecepatan tinggi berbasis chip semikonduktor untuk menyimpan Sistem Operasi Windows, aplikasi, dan dokumen secara permanen.",
@@ -109,7 +159,7 @@
             category: "Processing / Graphics Output",
             target_slot: "slot_vga",
             slot_label: "Slot VGA (PCIe x16 Bertulang Baja) di Motherboard",
-            order_hint: 6,
+            order_hint: 7,
             requires: [],
             physical_appearance: "Kartu grafis kelas tinggi dengan shroud logam gunmetal, tiga kipas pendingin aksial, heatsink aluminium bersirip rapat, heatpipe tembaga, pelat belakang, konektor PCIe x16 berlapis emas, dan soket daya tambahan 16-pin.",
             description: "Video Graphics Array (VGA) atau Graphics Processing Unit (GPU) bertugas mengolah data grafis dan mengirimkan sinyal tampilan visual ke layar monitor.",
@@ -124,7 +174,7 @@
             category: "Power Supply Unit (Luar Motherboard)",
             target_slot: "slot_psu",
             slot_label: "Ruang Dudukan PSU di Luar Area Motherboard",
-            order_hint: 7,
+            order_hint: 8,
             requires: [],
             physical_appearance: "Kotak baja ATX hitam dengan kisi kipas 120 mm di bagian atas, label tabel tegangan di sisi casing, panel konektor modular, soket AC IEC, dan sakelar rocker I/O pada panel belakang.",
             description: "Power Supply Unit (PSU) dipasang di ruang khusus pada casing di luar area motherboard. PSU mengubah arus listrik bolak-balik (AC 220V) dari stopkontak menjadi arus searah (DC +12V, +5V, +3.3V).",
@@ -139,7 +189,7 @@
             category: "Power Distribution Cable",
             target_slot: "slot_cable",
             slot_label: "Port Power 24-Pin ATX di Tepi Kanan Motherboard",
-            order_hint: 8,
+            order_hint: 9,
             requires: ["psu"],
             physical_appearance: "Berkas kabel listrik dengan warna standar ATX (kuning +12V, merah +5V, oranye +3.3V, hitam ground) yang keluar dari unit PSU dan berakhir pada kepala konektor plastik 24-pin.",
             description: "Kabel daya utama 24-Pin ATX menghubungkan PSU di luar motherboard menuju soket power utama di sisi kanan motherboard.",
@@ -265,7 +315,13 @@
     const camera = new THREE.PerspectiveCamera(42, initW / initH, 0.1, 100);
     camera.position.set(0.4, 13.2, 18.3);
 
-    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+    let renderer;
+    try {
+        renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
+    } catch (error) {
+        showThreeLoadError('Browser tidak dapat membuat tampilan WebGL. Aktifkan akselerasi perangkat keras di Chrome/Edge, tutup tab berat lain, lalu muat ulang. Detail: ' + (error && error.message ? error.message : 'WebGL tidak tersedia.'));
+        return;
+    }
     renderer.setSize(initW, initH);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.shadowMap.enabled = true;
@@ -479,6 +535,7 @@
     }
 
     createTargetSlot('slot_cpu', moboGroup, new THREE.Vector3(-0.2, 0.08, -0.75), new THREE.Vector3(1.25, 0.55, 1.25), null);
+    createTargetSlot('slot_thermal_paste', moboGroup, new THREE.Vector3(-0.2, 0.37, -0.75), new THREE.Vector3(0.90, 0.16, 0.76), null);
     // Dua target RAM individual: A2 dan B2 sesuai posisi slot fisik motherboard.
     createTargetSlot('slot_ram_a2', moboGroup, new THREE.Vector3(1.17, 0.12, -0.75), new THREE.Vector3(0.32, 0.72, 2.35), null);
     createTargetSlot('slot_ram_b2', moboGroup, new THREE.Vector3(1.89, 0.12, -0.75), new THREE.Vector3(0.32, 0.72, 2.35), null);
@@ -546,6 +603,7 @@
     // 5. LANGSUNG BANGUN SELURUH KOMPONEN 3D DI TRAY MEJA KERJA!
     // =========================================================================
     const componentMeshes = {};
+    let appliedThermalPasteMesh = null;
     const vgaFanMeshes = [];
     const cpuFanMeshes = [];
 
@@ -553,16 +611,17 @@
     // RAM dimiringkan 90 derajat saat di tray agar berbaring rata; X origin
     // ditambah 0.40 karena pusat PCB berada pada Y lokal sekitar 0.40.
     const trayPositions = {
-        // Baris depan: CPU, RAM satuan, SSD, dan pendingin CPU.
-        cpu:       new THREE.Vector3(-6.70, 0.055, 4.55),
-        ram1:      new THREE.Vector3(-4.30, 0.136, 4.55), // pusat visual X = -4.70
-        ram2:      new THREE.Vector3(-2.25, 0.136, 4.55), // pusat visual X = -2.65
-        ssd:       new THREE.Vector3(-0.20, 0.060, 4.55),
-        cpuCooler: new THREE.Vector3( 2.20,-0.094, 4.55),
+        // Baris depan: CPU, aplikator thermal paste, dua keping RAM, SSD, cooler.
+        cpu:         new THREE.Vector3(-6.95, 0.055, 4.55),
+        thermalPaste:new THREE.Vector3(-8.75, 0.005, 4.55),
+        ram1:        new THREE.Vector3(-4.65, 0.136, 4.55),
+        ram2:        new THREE.Vector3(-2.55, 0.136, 4.55),
+        ssd:         new THREE.Vector3(-0.45, 0.060, 4.55),
+        cpuCooler:   new THREE.Vector3( 2.00,-0.094, 4.55),
         // Baris belakang: kartu grafis, PSU, dan kabel daya.
-        vga:       new THREE.Vector3( 4.20, 0.010, 5.85),
-        psu:       new THREE.Vector3( 7.40, 0.060, 5.72),
-        cable:     new THREE.Vector3( 9.80, 0.121, 5.72)
+        vga:         new THREE.Vector3( 4.20, 0.010, 5.85),
+        psu:         new THREE.Vector3( 7.40, 0.060, 5.72),
+        cable:       new THREE.Vector3( 9.80, 0.121, 5.72)
     };
 
     const trayRotations = {
@@ -573,6 +632,7 @@
     function initComponentMeshes() {
         const builders = {
             cpu: () => M.buildCPU3D(),
+            thermalPaste: () => M.buildThermalPaste3D(),
             cpuCooler: () => M.buildCPUCooler3D(cpuFanMeshes),
             ram1: () => M.buildRAM3D(true),
             ram2: () => M.buildRAM3D(true),
@@ -663,7 +723,9 @@
         if (state.selectedPart && !state.installed.includes(state.selectedPart)) {
             const slotHits = raycaster.intersectObjects(Object.values(slotMeshes), false);
             if (slotHits.length > 0) {
-                attemptInstallComponent(state.selectedPart, slotHits[0].object.userData.slotId);
+                const expectedSlot = CATALOG[state.selectedPart]?.target_slot;
+                const expectedHit = slotHits.find(hit => hit.object.userData.slotId === expectedSlot);
+                attemptInstallComponent(state.selectedPart, expectedHit ? expectedSlot : slotHits[0].object.userData.slotId);
             }
         }
     });
@@ -680,9 +742,11 @@
         }
         const slotHits = raycaster.intersectObjects(Object.values(slotMeshes), false);
         if (slotHits.length > 0) {
-            const sId = slotHits[0].object.userData.slotId;
+            const expectedSlot = CATALOG[state.draggingPart]?.target_slot;
+            const expectedHit = slotHits.find(hit => hit.object.userData.slotId === expectedSlot);
+            const sId = expectedHit ? expectedSlot : slotHits[0].object.userData.slotId;
             state.hoveredSlot = sId;
-            highlightSlots(true, sId, CATALOG[state.draggingPart].target_slot === sId);
+            highlightSlots(true, sId, expectedSlot === sId);
         } else {
             state.hoveredSlot = null;
             highlightSlots(true);
@@ -697,7 +761,9 @@
             getPointerNDC(event);
             raycaster.setFromCamera(mouse, camera);
             const finalSlotHits = raycaster.intersectObjects(Object.values(slotMeshes), false);
-            state.hoveredSlot = finalSlotHits.length ? finalSlotHits[0].object.userData.slotId : null;
+            const expectedSlot = CATALOG[state.draggingPart]?.target_slot;
+            const expectedHit = finalSlotHits.find(hit => hit.object.userData.slotId === expectedSlot);
+            state.hoveredSlot = expectedHit ? expectedSlot : (finalSlotHits.length ? finalSlotHits[0].object.userData.slotId : null);
         }
         const partId = state.draggingPart;
         const slotId = state.hoveredSlot;
@@ -733,9 +799,11 @@
         }
         const slotHits = raycaster.intersectObjects(Object.values(slotMeshes), false);
         if (slotHits.length > 0) {
-            const sId = slotHits[0].object.userData.slotId;
+            const expectedSlot = CATALOG[state.draggingPart]?.target_slot;
+            const expectedHit = slotHits.find(hit => hit.object.userData.slotId === expectedSlot);
+            const sId = expectedHit ? expectedSlot : slotHits[0].object.userData.slotId;
             state.hoveredSlot = sId;
-            highlightSlots(true, sId, CATALOG[state.draggingPart].target_slot === sId);
+            highlightSlots(true, sId, expectedSlot === sId);
         } else {
             state.hoveredSlot = null;
             highlightSlots(true);
@@ -799,7 +867,9 @@
             snapComponentToBoard3D(partId);
             let installedMessage = result.message;
             if (partId === 'cpu') {
-                installedMessage += ' Sekarang ambil kipas dan heatsink CPU dari daftar komponen, lalu pasang secara terpisah di atas processor.';
+                installedMessage += ' Selanjutnya ambil Thermal Paste dari tray, lalu aplikasikan pada permukaan processor sebelum memasang heatsink.';
+            } else if (partId === 'thermalPaste') {
+                installedMessage += ' Pasta termal sudah diaplikasikan. Sekarang pasang kipas dan heatsink di atas processor.';
             } else if (partId === 'cpuCooler') {
                 installedMessage += ' Kipas CPU kini terpasang. Saat komputer dinyalakan, baling-baling akan berputar.';
             } else if (partId === 'ram1') {
@@ -824,6 +894,18 @@
         // Ini penting untuk RAM yang sengaja dibaringkan saat berada di tray.
         mesh.rotation.set(0, 0, 0);
         if (partId === 'cpu') { moboGroup.add(mesh); mesh.position.set(-0.2, 0.18, -0.75); }
+        else if (partId === 'thermalPaste') {
+            // Aplikator menghilang setelah digunakan; lapisan pasta muncul di atas IHS CPU.
+            mesh.visible = false;
+            if (appliedThermalPasteMesh) moboGroup.remove(appliedThermalPasteMesh);
+            const pasteMat = new THREE.MeshStandardMaterial({ color: 0xb9c2c8, metalness: 0.18, roughness: 0.24 });
+            appliedThermalPasteMesh = new THREE.Mesh(new THREE.SphereGeometry(0.145, 28, 18), pasteMat);
+            appliedThermalPasteMesh.scale.set(1.0, 0.15, 0.78);
+            appliedThermalPasteMesh.position.set(-0.2, 0.350, -0.75);
+            appliedThermalPasteMesh.castShadow = false;
+            appliedThermalPasteMesh.userData.partId = 'thermalPasteApplied';
+            moboGroup.add(appliedThermalPasteMesh);
+        }
         else if (partId === 'cpuCooler') { moboGroup.add(mesh); mesh.position.set(-0.2, 0.18, -0.75); }
         else if (partId === 'ram1') { moboGroup.add(mesh); mesh.position.set(1.17, 0.14, -0.75); }
         else if (partId === 'ram2') { moboGroup.add(mesh); mesh.position.set(1.89, 0.14, -0.75); }
@@ -1145,6 +1227,7 @@
         } else {
             itemData = CATALOG[itemId];
             if (itemId === 'cpu') { galleryCurrentMesh = M.buildCPU3D(); galleryCurrentMesh.scale.set(2.2, 2.2, 2.2); }
+            else if (itemId === 'thermalPaste') { galleryCurrentMesh = M.buildThermalPaste3D(); galleryCurrentMesh.scale.set(1.9, 1.9, 1.9); }
             else if (itemId === 'ram1' || itemId === 'ram2') { galleryCurrentMesh = M.buildRAM3D(true); galleryCurrentMesh.scale.set(1.45, 1.45, 1.45); }
             else if (itemId === 'cpuCooler') { galleryCurrentMesh = M.buildCPUCooler3D(null); galleryCurrentMesh.scale.set(1.05, 1.05, 1.05); }
             else if (itemId === 'ssd') { galleryCurrentMesh = M.buildSSD3D(); galleryCurrentMesh.scale.set(1.85, 1.85, 1.85); }
@@ -1358,8 +1441,15 @@
         state.bootStage = 'OFF';
         state.startTime = Date.now();
 
+        if (appliedThermalPasteMesh) {
+            moboGroup.remove(appliedThermalPasteMesh);
+            appliedThermalPasteMesh.geometry.dispose();
+            appliedThermalPasteMesh.material.dispose();
+            appliedThermalPasteMesh = null;
+        }
         Object.keys(componentMeshes).forEach(partId => {
             const mesh = componentMeshes[partId];
+            mesh.visible = true;
             scene.add(mesh);
             mesh.position.copy(trayPositions[partId]);
             mesh.rotation.set(0, 0, 0);
@@ -1491,13 +1581,13 @@
             button.textContent = light ? '☾ Mode Gelap' : '☀ Mode Terang';
             button.setAttribute('aria-pressed', light ? 'true' : 'false');
         }
-        try { localStorage.setItem('sim-hardware-web-theme', light ? 'light' : 'dark'); } catch (error) {}
+        try { localStorage.setItem('sim-hardware-web-theme-v3', light ? 'light' : 'dark'); } catch (error) {}
     }
     window.toggleWebTheme = function () {
         applyWebTheme(document.body.classList.contains('theme-light') ? 'dark' : 'light');
     };
-    let savedTheme = 'dark';
-    try { savedTheme = localStorage.getItem('sim-hardware-web-theme') || 'dark'; } catch (error) {}
+    let savedTheme = 'light';
+    try { savedTheme = localStorage.getItem('sim-hardware-web-theme-v3') || 'light'; } catch (error) {}
     applyWebTheme(savedTheme);
     syncFullscreenButton();
 

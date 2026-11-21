@@ -64,7 +64,7 @@ def serve_static_fallback(filename):
 def api_health():
     return jsonify({
         "status": "online",
-        "app": "SIM-HARDWARE 3D PRO",
+        "app": "SIMULATOR HARDWARE 3D V 1.0",
         "environment": "vercel" if os.environ.get("VERCEL") else "local"
     })
 

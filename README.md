@@ -1,4 +1,4 @@
-# SIM-HARDWARE 3D PRO (RAKITA 3D) — Siap Upload ke GitHub & Deploy ke Vercel
+# SIMULATOR HARDWARE 3D V 1.0 (SIMULATOR HARDWARE 3D V 1.0) — Siap Upload ke GitHub & Deploy ke Vercel
 
 Media Pembelajaran Interaktif (MPI) berbasis web dengan visualisasi **3D WebGL PBR Realistis 360°** dan arsitektur **Python Flask Modular** untuk mata pelajaran **Teknologi Informasi dan Komunikasi (TIK) / Informatika Kelas VII SMP/MTs (SMPIT Sahabat Alam)**.
 
@@ -46,7 +46,7 @@ SIM_HARDWARE_3D_PRO/
    cd SIM_HARDWARE_3D_PRO
    git init
    git add .
-   git commit -m "Initial commit: SIM-HARDWARE 3D PRO"
+   git commit -m "Initial commit: SIMULATOR HARDWARE 3D V 1.0"
    git branch -M main
    git remote add origin https://github.com/USERNAME_ANDA/sim-hardware-3d-pro.git
    git push -u origin main
@@ -135,3 +135,25 @@ Catatan urutan praktikum: pasang processor, pasang kipas/heatsink CPU secara ter
 - Ketinggian tray diselaraskan dengan dasar masing-masing model supaya komponen tidak melayang atau tertanam ke meja.
 - Tombol reset mengembalikan posisi dan rotasi tray, termasuk orientasi RAM yang dibaringkan.
 - Kamera overview sedikit diperlebar agar area casing dan tray lebih mudah terlihat sekaligus.
+
+
+## Tahap thermal paste (pasta termal)
+
+Alur latihan kini memuat 9 komponen: CPU → thermal paste → CPU cooler → RAM A2 → RAM B2 → SSD → VGA → PSU → kabel ATX. Aplikator pasta termal adalah objek 3D terpisah yang dapat diseret ke permukaan IHS processor. Setelah diaplikasikan, aplikator digantikan oleh ilustrasi lapisan pasta tipis; CPU cooler baru dapat dipasang setelah tahap ini selesai.
+
+Tema awal web menggunakan tampilan terang berwarna dengan font Fredoka untuk judul dan Nunito untuk isi. Siswa tetap dapat mengganti ke mode gelap melalui tombol tema.
+
+
+## Jika area 3D kosong
+
+Versi ini memperbaiki alamat file statis ketika `index.html` dibuka dari folder root maupun ketika aplikasi dijalankan melalui server. Cara yang paling disarankan tetap menjalankan `python app.py`, lalu membuka alamat lokal yang ditampilkan di terminal.
+
+Three.js dan OrbitControls dimuat dari CDN dengan alamat cadangan, sehingga koneksi internet diperlukan untuk mesin grafis 3D. Jika keduanya tidak dapat dimuat atau browser menonaktifkan WebGL, area simulasi kini menampilkan pesan diagnostik dan langkah pemulihan, bukan kanvas kosong. Gunakan Chrome/Edge terbaru dan aktifkan akselerasi perangkat keras.
+
+
+## Pemecahan masalah Canvas 3D (versi perbaikan 21 November 2026)
+
+- Buka aplikasi dari `python app.py` untuk server lokal, atau deploy seluruh folder proyek ke hosting.
+- Path aset statis sekarang relatif terhadap alamat halaman sehingga dapat bekerja di root domain maupun GitHub Pages yang memakai subfolder repositori.
+- Jika CDN Three.js tidak dapat diakses, panel simulasi menampilkan pesan yang menjelaskan apakah masalahnya berasal dari CDN atau path file `static`.
+- Tinggi viewport memiliki fallback inline agar tidak menyusut menjadi tinggi bawaan canvas 150 piksel ketika CSS gagal dimuat.

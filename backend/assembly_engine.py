@@ -60,7 +60,7 @@ def validate_component_drop(component_id: str, target_slot: str, installed: list
 
 def evaluate_power_boot(installed: list) -> dict:
     """Mengevaluasi status sistem saat tombol Power di casing ditekan."""
-    required_parts = ["cpu", "cpuCooler", "ram1", "ram2", "ssd", "vga", "psu", "cable"]
+    required_parts = ["cpu", "thermalPaste", "cpuCooler", "ram1", "ram2", "ssd", "vga", "psu", "cable"]
     missing_names = [HARDWARE_CATALOG[pid]["name"] for pid in required_parts if pid not in installed]
 
     if missing_names:
@@ -75,6 +75,9 @@ def evaluate_power_boot(installed: list) -> dict:
             detail = (
                 "POST BIOS Gagal: Processor (CPU) belum terpasang pada Soket LGA1700 di tengah motherboard!"
             )
+        elif "thermalPaste" not in installed:
+            error_code = "ERR_THERMAL_PASTE_MISSING"
+            detail = "Tahap perakitan belum lengkap: aplikasikan thermal paste tipis pada permukaan processor sebelum memasang heatsink." 
         elif "cpuCooler" not in installed:
             error_code = "ERR_CPU_COOLER_MISSING"
             detail = "POST BIOS belum dapat dilanjutkan: kipas dan heatsink pendingin processor belum dipasang di atas CPU."
@@ -105,6 +108,6 @@ def evaluate_power_boot(installed: list) -> dict:
         "boot_success": True,
         "error_code": "POST_OK_1_BEEP",
         "missing": [],
-        "message": "Semua 8 komponen terpasang sempurna! POST BIOS berhasil dan sistem operasi Windows 11 tampil di monitor."
+        "message": "Semua 9 komponen terpasang sempurna! POST BIOS berhasil dan sistem operasi Windows 11 tampil di monitor."
     }
 

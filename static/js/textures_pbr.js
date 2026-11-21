@@ -63,7 +63,7 @@ window.HardwareTextures = (function () {
         ctx.font = 'bold 16px monospace';
         ctx.fillStyle = 'rgba(229,190,104,0.88)';
         ctx.fillText('Z790  •  DDR4  •  ATX', 55, 970);
-        ctx.fillText('SIM-HARDWARE TRAINING BOARD', 780, 970);
+        ctx.fillText('SIMULATOR HARDWARE 3D V 1.0', 780, 970);
 
         const tex = new THREE.CanvasTexture(c);
         tex.anisotropy = 8;
@@ -465,7 +465,7 @@ window.HardwareTextures = (function () {
             ctx.fillStyle = '#38bdf8';
             ctx.font = 'bold 28px monospace';
             ctx.textAlign = 'left';
-            ctx.fillText('SAMSUNG UEFI DISPLAY • SIM-HARDWARE BIOS', 48, 76);
+            ctx.fillText('SAMSUNG UEFI DISPLAY • SIMULATOR HARDWARE 3D V 1.0 BIOS', 48, 76);
 
             ctx.fillStyle = '#e2e8f0';
             ctx.font = '21px monospace';

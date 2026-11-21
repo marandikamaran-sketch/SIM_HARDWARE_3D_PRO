@@ -359,6 +359,49 @@ window.HardwareModels3D = (function () {
 
 
 
+    function buildThermalPaste3D() {
+        // Aplikator pasta termal 3D terpisah: tabung, label, pendorong, tutup, dan nozzle.
+        // Model dibaringkan horizontal agar stabil di tray dan mudah disentuh pada layar PID/HP.
+        const g = new THREE.Group();
+        const barrelMat = new THREE.MeshStandardMaterial({ color: 0xe8edf1, metalness: 0.48, roughness: 0.30 });
+        const labelMat = new THREE.MeshStandardMaterial({ color: 0x38a6d8, metalness: 0.35, roughness: 0.28 });
+        const darkMat = new THREE.MeshStandardMaterial({ color: 0x273747, metalness: 0.38, roughness: 0.32 });
+        const metalMat = new THREE.MeshStandardMaterial({ color: 0x9aa7b1, metalness: 0.88, roughness: 0.22 });
+        const pasteMat = new THREE.MeshStandardMaterial({ color: 0xbac3c8, metalness: 0.18, roughness: 0.24 });
+        // Tabung utama, sumbu memanjang ke arah X.
+        const barrel = new THREE.Mesh(new THREE.CylinderGeometry(0.105, 0.105, 0.62, 28), barrelMat);
+        barrel.rotation.z = Math.PI / 2;
+        barrel.position.set(0.08, 0.16, 0);
+        barrel.castShadow = true; barrel.userData.partId = 'thermalPaste'; g.add(barrel);
+        const label = new THREE.Mesh(new THREE.CylinderGeometry(0.107, 0.107, 0.22, 28), labelMat);
+        label.rotation.z = Math.PI / 2;
+        label.position.set(0.12, 0.16, 0); label.userData.partId = 'thermalPaste'; g.add(label);
+        // Pendorong belakang dan batang penekan.
+        const plungerRod = new THREE.Mesh(new THREE.CylinderGeometry(0.026, 0.026, 0.25, 16), metalMat);
+        plungerRod.rotation.z = Math.PI / 2; plungerRod.position.set(0.515, 0.16, 0); plungerRod.userData.partId = 'thermalPaste'; g.add(plungerRod);
+        const thumbPad = new THREE.Mesh(new THREE.CylinderGeometry(0.115, 0.115, 0.055, 24), darkMat);
+        thumbPad.rotation.z = Math.PI / 2; thumbPad.position.set(0.65, 0.16, 0); thumbPad.userData.partId = 'thermalPaste'; g.add(thumbPad);
+        // Leher dan nozzle runcing di depan.
+        const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.073, 0.095, 0.16, 20), metalMat);
+        neck.rotation.z = Math.PI / 2; neck.position.set(-0.31, 0.16, 0); neck.userData.partId = 'thermalPaste'; g.add(neck);
+        const nozzle = new THREE.Mesh(new THREE.CylinderGeometry(0.014, 0.067, 0.20, 20), darkMat);
+        nozzle.rotation.z = Math.PI / 2; nozzle.position.set(-0.475, 0.16, 0); nozzle.userData.partId = 'thermalPaste'; g.add(nozzle);
+        const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.045, 0.095, 20), pasteMat);
+        cap.rotation.z = Math.PI / 2; cap.position.set(-0.61, 0.16, 0); cap.userData.partId = 'thermalPaste'; g.add(cap);
+        // Cincin grip kecil pada badan aplikator.
+        for (let i = 0; i < 4; i++) {
+            const ring = new THREE.Mesh(new THREE.TorusGeometry(0.108, 0.008, 6, 28), metalMat);
+            ring.rotation.y = Math.PI / 2; ring.position.set(-0.08 + i * 0.12, 0.16, 0); ring.userData.partId = 'thermalPaste'; g.add(ring);
+        }
+        // Teks pada label sebagai geometri datar berwarna, supaya tetap terbaca dari tampak atas.
+        const labelPlate = new THREE.Mesh(new THREE.BoxGeometry(0.20, 0.009, 0.105), darkMat);
+        labelPlate.position.set(0.12, 0.268, 0); labelPlate.userData.partId = 'thermalPaste'; g.add(labelPlate);
+        const logoDot = new THREE.Mesh(new THREE.CircleGeometry(0.025, 18), pasteMat);
+        logoDot.position.set(0.12, 0.275, 0); logoDot.rotation.x = -Math.PI / 2; logoDot.userData.partId = 'thermalPaste'; g.add(logoDot);
+        g.userData.partId = 'thermalPaste';
+        return g;
+    }
+
     function buildCPUCooler3D(fanMeshesOut) {
         // Pendingin udara CPU model top-down: cold plate, tumpukan sirip aluminium,
         // rangka kipas 120 mm, rotor tujuh bilah, hub, klip, dan empat sekrup.
@@ -984,6 +1027,7 @@ window.HardwareModels3D = (function () {
     return {
         buildMotherboardAssembly,
         buildCPU3D,
+        buildThermalPaste3D,
         buildCPUCooler3D,
         buildRAM3D,
         buildSSD3D,

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 =============================================================================
-SIM-HARDWARE 3D PRO — LOCAL LAUNCHER (app.py)
+SIMULATOR HARDWARE 3D V 1.0 — LOCAL LAUNCHER (app.py)
 Menjalankan server web Python di komputer lokal dengan auto-open browser.
 - Jika Flask terinstal, menjalankan WSGI app yang sama dengan Vercel (`api/index.py`).
 - Jika Flask belum terinstal di PC lokal, otomatis fallback ke `ThreadingHTTPServer`
@@ -107,7 +107,7 @@ class LocalFallbackHandler(BaseHTTPRequestHandler):
             else:
                 self.send_error(403, "Forbidden")
         elif path == "/api/health":
-            self._send_json({"status": "online", "app": "SIM-HARDWARE 3D PRO", "environment": "local-stdlib"})
+            self._send_json({"status": "online", "app": "SIMULATOR HARDWARE 3D V 1.0", "environment": "local-stdlib"})
         elif path == "/api/components":
             self._send_json({"motherboard": MOTHERBOARD_INFO, "catalog": HARDWARE_CATALOG})
         elif path == "/api/quiz":
@@ -155,7 +155,7 @@ def main():
     url = f"http://127.0.0.1:{port}"
 
     print("=" * 72)
-    print("  SIM-HARDWARE 3D PRO — MEDIA PEMBELAJARAN INTERAKTIF BERBASIS PYTHON")
+    print("  SIMULATOR HARDWARE 3D V 1.0 — MEDIA PEMBELAJARAN INTERAKTIF BERBASIS PYTHON")
     print("  Siap Lokal, GitHub, & Vercel Custom Domain • SMPIT Sahabat Alam")
     print("=" * 72)
     print(f"  [OK] Server Web Lokal : {url}")
